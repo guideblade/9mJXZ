@@ -5,9 +5,22 @@
 
 ## marketplace
 
-
 Данный сервис ответает за создание товара, создание остатка, увеличение остатка, уменьшение остатка, получение остатка по фидльтрам и получения товаров по фильтрам.
+
 Фреймворк: express.js. Система управления базами данных: PostgreSQL. Язык: JavaScript.
+
+Запуск `node stock.js`. URL: `http://localhost:3000`.
+
+Перед запуском следует настроить `.env` файл. Параметры по умолчанию:
+
+```
+PGHOST=localhost
+PGUSER=postgres
+PGPASSWORD=admin
+PGDATABASE=marketplace
+PGPORT=5432
+STORIES_SERVER_URL=http://localhost:3001/v1
+```
 
 ### структура базы данных
 
@@ -52,6 +65,18 @@ API v1. Доступно 6 действий.
 
 Сервис stories тесно связан с сервисом marketplace. Его задача: записывать все выполненные действия (actions) в собственную базу данных.
 
+Запуск `node stories.js`. URL: `http://localhost:3001`.
+
+Перед запуском следует настроить `.env` файл. Параметры по умолчанию:
+
+```
+PGHOST=localhost
+PGUSER=postgres
+PGPASSWORD=admin
+PGDATABASE=stories
+PGPORT=5432
+```
+
 База данных `stories` содержит 2 таблицы: `actions`, `stories`.
 
 Таблица `actions`:
@@ -70,3 +95,41 @@ API v1. Доступно 6 действий.
 Например: GET `http://localhost:3001/v1/stories?end_date=2024-12-04&start_date=2024-12-02&page=4` вернет все истории с начальной датой 2024-12-02, по конечную дату 2024-12-04 (в UTC), четвертую страницу.
 
 # Задание 2
+
+Реализовал сервис по возвращению количества пользователей с ошибками из базы данных.
+
+## структура базы данных
+
+База данных `profiles` имеет таблицу `users` со следующей схемой:
+
+`id`: integer, `name`: text, `surname`: text, `age`: integer, `sex`: char, `issues`: boolean
+
+В папке гита `profiles` находится скрипт `populateusers.js`, который можно запустить `node populateusers.js`, чтобы сгенерировать 1 млн пользователей.
+
+Перед запуском следует настроить `.env` файл. Параметры по умолчанию:
+
+```
+PGHOST=localhost
+PGUSER=postgres
+PGPASSWORD=admin
+PGDATABASE=profiles
+PGPORT=5432
+```
+
+В тот же самой папке находится Nest.js проект `user-service`, который можно запустить `npm run start`. URL: `http://localhost:3002`.
+
+Перед запуском следует настроить отдельный `.env` файл. Параметры по умолчанию:
+
+```
+PGHOST=localhost
+PGUSER=postgres
+PGPASSWORD=admin
+PGDATABASE=profiles
+PGPORT=5432
+```
+
+Доступно одно действие:
+
+- PATCH /users/resolve-issues
+
+Обновляет флаги `issues` с `true` на `false` и возвращает количество обновленных флагов.
